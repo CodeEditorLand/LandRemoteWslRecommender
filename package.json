@@ -76,8 +76,8 @@
 	"devDependencies": {
 		"@playform/build": "0.0.7",
 		"@playform/document": "0.0.6",
-		"@types/node": "16.x",
-		"ts-loader": "^9.4.2"
+		"@types/node": "20.x",
+		"ts-loader": "9.5.1"
 	},
 	"publishConfig": {
 		"access": "public"
