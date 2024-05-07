@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 //@ts-check
-/** @typedef {import('webpack').Configuration} WebpackConfig **/
+
 
 const path = require('path');
 const fs = require('fs');
@@ -17,7 +17,7 @@ const pkgPath = path.join(__dirname, 'package.json');
 const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 const id = `${pkg.publisher}.${pkg.name}`;
 
-/** @type WebpackConfig */
+
 module.exports = {
 	entry: {
 		extension: './src/extension.ts'
