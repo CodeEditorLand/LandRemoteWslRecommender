@@ -155,7 +155,6 @@ class ExperimentationTelemetry implements IExperimentationTelemetry {
 		for (const [key, value] of props) {
 			event[key] = value;
 		}
-
 		this.sendTelemetryEvent(eventName, event);
 	}
 }
