@@ -2,19 +2,22 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------------------------------------------*/
 
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+const fs = require("fs");
+const path = require("path");
+const os = require("os");
 
-const packageJSON = require('../package.json');
+const packageJSON = require("../package.json");
 
 function getExtensionPath(dataFolder) {
-	const wslExtensionsPath = path.join(os.homedir(), dataFolder, 'extensions');
+	const wslExtensionsPath = path.join(os.homedir(), dataFolder, "extensions");
 	if (!fs.statSync(wslExtensionsPath).isDirectory()) {
-		throw new Error('extensions folder not found at ' + wslExtensionsPath);
+		throw new Error("extensions folder not found at " + wslExtensionsPath);
 	}
 
-	const wslExtensionPath = path.join(wslExtensionsPath, 'ms-vscode-remote.remote-wsl-recommender-' + packageJSON.version);
+	const wslExtensionPath = path.join(
+		wslExtensionsPath,
+		"ms-vscode-remote.remote-wsl-recommender-" + packageJSON.version,
+	);
 	if (!fs.existsSync(wslExtensionPath)) {
 		fs.mkdirSync(wslExtensionPath);
 	}
@@ -37,10 +40,13 @@ function copy(fileNames, srcDir, targetDir) {
 			copy(files, localPath, targetPath);
 		}
 	}
-
 }
 
-const srcDir = path.resolve(__dirname, '..');
+const srcDir = path.resolve(__dirname, "..");
 const wslExtensionPath = getExtensionPath(process.argv[2]);
 
-copy(['dist', 'resources', 'package.json', 'package.nls.json'], srcDir, wslExtensionPath);
+copy(
+	["dist", "resources", "package.json", "package.nls.json"],
+	srcDir,
+	wslExtensionPath,
+);
