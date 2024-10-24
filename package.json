@@ -50,7 +50,7 @@
 	"description": "%description%",
 	"devDependencies": {
 		"@types/node": "22.x",
-		"ts-loader": "^9.5.1"
+		"ts-loader": "9.5.1"
 	},
 	"displayName": "%displayName%",
 	"icon": "resources/remote-wsl.png",
