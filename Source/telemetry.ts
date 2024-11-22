@@ -71,6 +71,7 @@ export function getTelemetry(
 	const wslExtension = vscode.extensions.getExtension(
 		ExtensionId.remoteWSLRecommender,
 	);
+
 	if (!wslExtension) {
 		throw new Error(
 			`${ExtensionId.remoteWSLRecommender} not found in extensions.`,
@@ -84,11 +85,13 @@ export function getTelemetry(
 	context.subscriptions.push(baseReporter);
 
 	const reporter = new ExperimentationTelemetry(baseReporter);
+
 	const target = getTargetPopulation();
 
 	const onDidChangeEmitter = new vscode.EventEmitter<void>();
 
 	let experimentService: IExperimentationService | undefined;
+
 	const initExperimentationService = () => {
 		if (enableExperiments() && !enableAllExperimentalFeatures()) {
 			/* __GDPR__
@@ -160,6 +163,7 @@ export function getTelemetry(
 		},
 		onDidChange: onDidChangeEmitter.event,
 	};
+
 	return telemetry;
 }
 
@@ -195,6 +199,7 @@ class ExperimentationTelemetry implements IExperimentationTelemetry {
 
 	postEvent(eventName: string, props: Map<string, string>): void {
 		const event: Record<string, string> = {};
+
 		for (const [key, value] of props) {
 			event[key] = value;
 		}
@@ -204,15 +209,20 @@ class ExperimentationTelemetry implements IExperimentationTelemetry {
 
 function getTargetPopulation() {
 	const { quality } = getProductConfiguration(vscode.env.appRoot);
+
 	switch (quality) {
 		case "stable":
 			return TargetPopulation.Public;
+
 		case "insider":
 			return TargetPopulation.Insiders;
+
 		case "exploration":
 			return TargetPopulation.Internal;
+
 		case undefined:
 			return TargetPopulation.Team;
+
 		default:
 			return TargetPopulation.Public;
 	}

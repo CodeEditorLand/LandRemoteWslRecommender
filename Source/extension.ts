@@ -62,8 +62,10 @@ export async function activate(context: vscode.ExtensionContext) {
 		};
 
 		let isEnabled = false;
+
 		const featureEnablementChanged = async () => {
 			const newIsEnabled = await isFeatureEnabled();
+
 			if (isEnabled !== newIsEnabled) {
 				isEnabled = newIsEnabled;
 				vscode.commands.executeCommand(
@@ -71,6 +73,7 @@ export async function activate(context: vscode.ExtensionContext) {
 					contextKey,
 					isEnabled,
 				);
+
 				if (isEnabled) {
 					featureDisposable = initFeature();
 				} else if (featureDisposable) {
@@ -96,16 +99,23 @@ export async function activate(context: vscode.ExtensionContext) {
 			CommandId.connectToWSL,
 			async () => {
 				telemetry.reportCommand(Command.connectToWSL);
+
 				const isWSLInstalled = await checkIfWSLInstalled();
+
 				if (isWSLInstalled !== true) {
 					telemetry.reportDialog(Dialog.wslNotInstalled, "show");
+
 					const installWSL = "Install Now";
+
 					const learnMore = "Learn More";
+
 					const powershellLocation = getPowershellLocation();
+
 					const buttons =
 						hasWSLInstall() && powershellLocation
 							? [installWSL, learnMore]
 							: [learnMore];
+
 					const response = await vscode.window.showErrorMessage(
 						localize(
 							"installWSL",
@@ -113,6 +123,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						),
 						...buttons,
 					);
+
 					if (response === learnMore) {
 						telemetry.reportDialog(Dialog.wslNotInstalled, "open");
 						await vscode.env.openExternal(
@@ -134,10 +145,12 @@ export async function activate(context: vscode.ExtensionContext) {
 						Dialog.wslRemoteNotInstalled,
 						"show",
 					);
+
 					const showExtension = localize(
 						"showExtensionButton",
 						"Show Extension",
 					);
+
 					const res = await vscode.window.showInformationMessage(
 						localize(
 							"installRemoteWSLDescription",
@@ -145,6 +158,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						),
 						showExtension,
 					);
+
 					if (res === showExtension) {
 						telemetry.reportDialog(
 							Dialog.wslRemoteNotInstalled,
@@ -174,6 +188,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				CommandId.gettingStarted,
 				async () => {
 					telemetry.reportCommand(Command.openWSLDocumentation);
+
 					return vscode.env.openExternal(
 						vscode.Uri.parse(WSL_DOC_URL),
 					);
@@ -189,6 +204,7 @@ export function deactivate() {}
 export async function checkIfWSLInstalled(): Promise<true | string> {
 	if (getWindowsBuildNumber() >= 22000) {
 		const wslExePath = getWSLExecutablePath();
+
 		if (wslExePath) {
 			if (!(await fileExists(wslExePath))) {
 				return `'${wslExePath}' not found`;
@@ -207,6 +223,7 @@ export async function checkIfWSLInstalled(): Promise<true | string> {
 		}
 	} else {
 		const dllPath = getLxssManagerDllPath();
+
 		if (dllPath) {
 			if (await fileExists(dllPath)) {
 				return true;
@@ -226,7 +243,9 @@ function getLxssManagerDllPath(): string | undefined {
 	const is32ProcessOn64Windows = process.env.hasOwnProperty(
 		"PROCESSOR_ARCHITEW6432",
 	);
+
 	const systemRoot = process.env["SystemRoot"];
+
 	if (systemRoot) {
 		return path.join(
 			systemRoot,
@@ -242,7 +261,9 @@ function getWSLExecutablePath(): string | undefined {
 	const is32ProcessOn64Windows = process.env.hasOwnProperty(
 		"PROCESSOR_ARCHITEW6432",
 	);
+
 	const systemRoot = process.env["SystemRoot"];
+
 	if (systemRoot) {
 		return path.join(
 			systemRoot,
@@ -257,7 +278,9 @@ function getPowershellLocation(): string | undefined {
 	const is32ProcessOn64Windows = process.env.hasOwnProperty(
 		"PROCESSOR_ARCHITEW6432",
 	);
+
 	const systemRoot = process.env["SystemRoot"];
+
 	if (systemRoot) {
 		return path.join(
 			systemRoot,
@@ -302,6 +325,7 @@ let windowsBuildNumber: number | undefined;
 function getWindowsBuildNumber(): number {
 	if (typeof windowsBuildNumber !== "number") {
 		const osVersion = /(\d+)\.(\d+)\.(\d+)/g.exec(os.release());
+
 		if (osVersion && osVersion.length === 4) {
 			windowsBuildNumber = parseInt(osVersion[3]);
 		} else {
