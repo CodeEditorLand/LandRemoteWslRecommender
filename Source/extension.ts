@@ -68,6 +68,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 			if (isEnabled !== newIsEnabled) {
 				isEnabled = newIsEnabled;
+
 				vscode.commands.executeCommand(
 					"setContext",
 					contextKey,
@@ -78,17 +79,22 @@ export async function activate(context: vscode.ExtensionContext) {
 					featureDisposable = initFeature();
 				} else if (featureDisposable) {
 					featureDisposable.dispose();
+
 					featureDisposable = undefined;
 				}
 			}
 		};
+
 		await featureEnablementChanged();
+
 		context.subscriptions.push(
 			vscode.extensions.onDidChange(featureEnablementChanged),
 		);
+
 		context.subscriptions.push(
 			telemetry.onDidChange(featureEnablementChanged),
 		);
+
 		context.subscriptions.push({
 			dispose: () => featureDisposable?.dispose(),
 		});
@@ -126,6 +132,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 					if (response === learnMore) {
 						telemetry.reportDialog(Dialog.wslNotInstalled, "open");
+
 						await vscode.env.openExternal(
 							vscode.Uri.parse(
 								"https://aka.ms/vscode-remote/wsl/install-wsl",
@@ -136,6 +143,7 @@ export async function activate(context: vscode.ExtensionContext) {
 							Dialog.wslNotInstalled,
 							"install",
 						);
+
 						startWSLInstall(powershellLocation!);
 					} else {
 						telemetry.reportDialog(Dialog.wslNotInstalled, "close");
@@ -164,6 +172,7 @@ export async function activate(context: vscode.ExtensionContext) {
 							Dialog.wslRemoteNotInstalled,
 							"open",
 						);
+
 						await vscode.commands.executeCommand(
 							"workbench.extensions.action.showExtensionsWithIds",
 							[ExtensionId.remoteWSL],
@@ -209,6 +218,7 @@ export async function checkIfWSLInstalled(): Promise<true | string> {
 			if (!(await fileExists(wslExePath))) {
 				return `'${wslExePath}' not found`;
 			}
+
 			return new Promise<true | string>((s) => {
 				cp.execFile(wslExePath, ["--status"], (err) => {
 					if (err) {
@@ -254,6 +264,7 @@ function getLxssManagerDllPath(): string | undefined {
 			"LxssManager.dll",
 		);
 	}
+
 	return undefined;
 }
 
@@ -271,6 +282,7 @@ function getWSLExecutablePath(): string | undefined {
 			"wsl.exe",
 		);
 	}
+
 	return undefined;
 }
 
@@ -290,19 +302,26 @@ function getPowershellLocation(): string | undefined {
 			"powershell.exe",
 		);
 	}
+
 	return undefined;
 }
 
 function startWSLInstall(powershellLocation: string) {
 	const command = [];
+
 	command.push(powershellLocation);
+
 	command.push("Start-Process");
+
 	command.push("-FilePath", "cmd");
+
 	command.push(
 		"-ArgumentList",
 		`'/c "${getWSLExecutablePath()} --install & pause"'`,
 	);
+
 	command.push("-Verb", "RunAs");
+
 	cp.exec(
 		command.join(" "),
 		{ encoding: "utf-8" },
@@ -310,7 +329,9 @@ function startWSLInstall(powershellLocation: string) {
 			if (error) {
 				console.log(error);
 			}
+
 			console.log(stdout);
+
 			console.error(stderr);
 		},
 	);
@@ -332,5 +353,6 @@ function getWindowsBuildNumber(): number {
 			windowsBuildNumber = 0;
 		}
 	}
+
 	return windowsBuildNumber;
 }

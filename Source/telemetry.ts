@@ -77,11 +77,13 @@ export function getTelemetry(
 			`${ExtensionId.remoteWSLRecommender} not found in extensions.`,
 		);
 	}
+
 	const extensionPackage = wslExtension.packageJSON;
 
 	const { name, publisher, version, aiKey } = extensionPackage;
 
 	const baseReporter = new TelemetryReporter(aiKey);
+
 	context.subscriptions.push(baseReporter);
 
 	const reporter = new ExperimentationTelemetry(baseReporter);
@@ -110,6 +112,7 @@ export function getTelemetry(
 			experimentService = undefined;
 		}
 	};
+
 	initExperimentationService();
 
 	context.subscriptions.push(
@@ -120,6 +123,7 @@ export function getTelemetry(
 				e.affectsConfiguration(ConfigKeys.enableAllExperiments)
 			) {
 				initExperimentationService();
+
 				onDidChangeEmitter.fire();
 			}
 		}),
@@ -137,6 +141,7 @@ export function getTelemetry(
 				}
 			 */
 			const data: Record<string, string> = { kind, outcome };
+
 			reporter.sendTelemetryEvent("recommendation", data);
 		},
 		reportCommand(kind: Command): void {
@@ -149,6 +154,7 @@ export function getTelemetry(
 				}
 			 */
 			const data: Record<string, string> = { kind };
+
 			reporter.sendTelemetryEvent("command", data);
 		},
 		async isExperimentEnabled(experiment: Experiment): Promise<boolean> {
@@ -169,8 +175,11 @@ export function getTelemetry(
 
 export interface WSLRemoteTelemetry {
 	reportDialog(kind: Dialog, outcome: "open" | "close" | string): void;
+
 	reportCommand(kind: Command): void;
+
 	isExperimentEnabled(experiment: Experiment): Promise<boolean>;
+
 	readonly onDidChange: vscode.Event<void>;
 }
 class ExperimentationTelemetry implements IExperimentationTelemetry {
@@ -203,6 +212,7 @@ class ExperimentationTelemetry implements IExperimentationTelemetry {
 		for (const [key, value] of props) {
 			event[key] = value;
 		}
+
 		this.sendTelemetryEvent(eventName, event);
 	}
 }
@@ -230,8 +240,11 @@ function getTargetPopulation() {
 
 export interface IProductConfiguration {
 	commit?: string;
+
 	quality: string;
+
 	serverDataFolderName?: string;
+
 	updateUrl: string;
 }
 
@@ -244,7 +257,9 @@ export function getProductConfiguration(
 		const content = fs
 			.readFileSync(path.join(appRoot, "product.json"))
 			.toString();
+
 		product = JSON.parse(content) as IProductConfiguration;
 	}
+
 	return product;
 }
